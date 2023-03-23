@@ -1,11 +1,17 @@
 from flask import Flask, url_for, request
+from werkzeug.utils import secure_filename
+import os
+from io import BytesIO
+from PIL import Image
 
 app = Flask(__name__)
 
+photo_file = "static/img/photo.jpg"
+
 
 @app.route('/')
-@app.route('/form_sample', methods=['POST', 'GET'])
-def form_sample():
+@app.route('/load_photo', methods=['POST', 'GET'])
+def load_photo():
     if request.method == 'GET':
         return f'''<!doctype html>
                         <html lang="en">
@@ -20,106 +26,25 @@ def form_sample():
                             <title>Отбор астронавтов</title>
                           </head>
                           <body>
-                            <h1>Анкета претендента</h1>
-                            <h2>на участие в миссии</h2>
+                            <h1>Загрузка фотографии</h1>
+                            <h2>для участия в миссии</h2>
                             <div>
-                                <form class="login_form" method="post">
-                                    <input type="name" class="form-control" id="name" aria-describedby="emailHelp" placeholder="Введите фамилию" name="name">
-                                    <input type="name" class="form-control" id="firstname" placeholder="Введите имя" name="firstname">
-                                    <p> </p>
-                                    <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Введите адрес почты" name="email">
-                                    <div class="form-group">
-                                        <label for="classSelect">Какое у вас образование?</label>
-                                        <select class="form-control" id="classSelect" name="class">
-                                          <option>Дошкольное</option>
-                                          <option>Начальное общее</option>
-                                          <option>Основное общее</option>
-                                          <option>Среднее общее</option>
-                                          <option>Высшее</option>
-                                        </select>
-                                    </div>
-                                    <p> </p>
-                                    <div class="form-group">
-                                        <label for="form-check">Какие у Вас есть профессии?</label>
-                                        <div class="form-group form-check">
-                                            <input type="checkbox" class="form-check-input" id="1" name="profession">
-                                            <label class="form-check-label" for="acceptRules">Инженер-исследователь</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input type="checkbox" class="form-check-input" id="2" name="profession">
-                                            <label class="form-check-label" for="acceptRules">Инженер-строитель</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input type="checkbox" class="form-check-input" id="3" name="profession">
-                                            <label class="form-check-label" for="acceptRules">Пилот</label>
-                                        </div>
-                                         <div class="form-group form-check">
-                                            <input type="checkbox" class="form-check-input" id="4" name="profession">
-                                            <label class="form-check-label" for="acceptRules">Метеоролог</label>
-                                        </div>
-                                         <div class="form-group form-check">
-                                            <input type="checkbox" class="form-check-input" id="5" name="profession">
-                                            <label class="form-check-label" for="acceptRules">Инженер по жизнеобеспечению</label>
-                                        </div>
-                                         <div class="form-group form-check">
-                                            <input type="checkbox" class="form-check-input" id="6" name="profession">
-                                            <label class="form-check-label" for="acceptRules">Инженер по радиационной защите</label>
-                                        </div>
-                                         <div class="form-group form-check">
-                                            <input type="checkbox" class="form-check-input" id="7" name="profession">
-                                            <label class="form-check-label" for="acceptRules">Врач</label>
-                                        </div>
-                                         <div class="form-group form-check">
-                                            <input type="checkbox" class="form-check-input" id="8" name="profession">
-                                            <label class="form-check-label" for="acceptRules">Экзобиолог</label>
-                                        </div>
-                                    <p> </p>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="form-check">Укажите пол</label>
-                                        <div class="form-check">
-                                          <input class="form-check-input" type="radio" name="sex" id="male" value="male" checked>
-                                          <label class="form-check-label" for="male">
-                                            Мужской
-                                          </label>
-                                        </div>
-                                        <div class="form-check">
-                                          <input class="form-check-input" type="radio" name="sex" id="female" value="female">
-                                          <label class="form-check-label" for="female">
-                                            Женский
-                                          </label>
-                                        </div>
-                                    <p> </p>
-                                    </div>
-                                    <p> </p>
-                                    <div class="form-group">
-                                        <label for="about">Почему Вы хотите принять участие в миссии?</label>
-                                        <textarea class="form-control" id="about" rows="3" name="about"></textarea>
-                                    </div>
-                                    <p> </p>
+                                <form class="login_form" method="post" enctype="multipart/form-data">
                                     <div class="form-group">
                                         <label for="photo">Приложите фотографию</label>
                                         <input type="file" class="form-control-file" id="photo" name="file">
                                     </div>
-                                    <p> </p>
-                                    <div class="form-group form-check">
-                                        <input type="checkbox" class="form-check-input" id="acceptRules" name="accept">
-                                        <label class="form-check-label" for="acceptRules">Готовы остаться на Марсе?</label>
-                                    </div>
-                                    <p> </p>
                                     <button type="submit" class="btn btn-primary">Отправить</button>
+                                    <img src="{url_for('static', filename='img/res.jpg')}" 
+                                    alt="здесь должна была быть картинка, но вы ее пока не загрузили">
                                 </form>
                             </div>
                           </body>
                         </html>'''
     elif request.method == 'POST':
-        print(request.form['email'])
-        print(request.form['password'])
-        print(request.form['class'])
-        print(request.form['file'])
-        print(request.form['about'])
-        print(request.form['accept'])
-        print(request.form['sex'])
+        f = request.files['file']
+        image = Image.open(BytesIO(f.read()))
+        image.save('static/img/res.jpg')
         return "Форма отправлена"
 
 
