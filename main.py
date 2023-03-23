@@ -10,8 +10,8 @@ photo_file = "static/img/photo.jpg"
 
 
 @app.route('/')
-@app.route('/choice/<planet_name>')
-def choice(planet_name):
+@app.route('/results/<nickname>/<int:level>/<float:rating>')
+def results(nickname, level, rating):
     return f"""<!doctype html>
                     <html lang="en">
                       <head>
@@ -25,20 +25,14 @@ def choice(planet_name):
                         <title>Привет, Марс!</title>
                       </head>
                       <body>
-                        <h1>Мое предложение: {planet_name}</h1>
-                        <h2>Эта планета близка к Земле;</h2>
+                        <h1>Результат отбора</h1>
+                        <h2>Претендент на участие в миссии {nickname}:</h2>
                         <div class="alert alert-success" role="alert">
-                          На ней много необходимых ресурсов;
+                          Поздравляем! ваш рейтинг после {level} этапа отбора
                         </div>
-                        <div class="alert alert-success" role="alert">
-                          На ней есть вода и атмосфера;
-                        </div>
+                        <p> составляет {rating}!</p>
                         <div class="alert alert-warning" role="alert">
-                         На ней есть небольшое магнитное поле;
-                        </div>
-                        <div class="alert alert-danger" role="alert">
-                          Наконец, она просто красива!
-                        </div>
+                         Желаем удачи!
                       </body>
                     </html>"""
 
